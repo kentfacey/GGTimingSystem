@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">GGTimingSystem</string>
+    <string name="home_title">Upcoming Runs</string>
+    <string name="date">xxx 00, 0000</string>
+    <string name="time">00:00 am</string>
+    <string name="timeUntilStart">Starts in x minutes</string>
+    <string name="distance">x miles</string>
+    <string name="attendance">0/100</string>
+</resources>
