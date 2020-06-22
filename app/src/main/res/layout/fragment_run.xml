@@ -8,7 +8,7 @@
     android:background="@color/white">
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btnJoinRun"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="30dp"
@@ -18,14 +18,15 @@
         android:text="Join Run"
         android:textColor="@color/white"
         android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/button2"
+        android:onClick="openFragmentRun"
+        app:layout_constraintBottom_toTopOf="@+id/btnPractice"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.549" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/btnPractice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="30dp"

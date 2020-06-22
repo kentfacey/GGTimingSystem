@@ -16,6 +16,6 @@ class RunDetailsFragment : Fragment() {
         inflater.inflate(R.layout.fragment_run_details, container, false)
 
     companion object {
-        fun newInstance(): RunFragment = RunFragment()
+        fun newInstance(): RunDetailsFragment = RunDetailsFragment()
     }
 }

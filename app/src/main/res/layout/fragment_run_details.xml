@@ -78,7 +78,7 @@
             app:layout_constraintTop_toBottomOf="@+id/tVPeople">
 
             <Button
-                android:id="@+id/bJoin"
+                android:id="@+id/btnJoin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="30dp"
@@ -91,7 +91,7 @@
                 android:visibility="gone" />
 
             <Button
-                android:id="@+id/bLeave"
+                android:id="@+id/btnLeave"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
@@ -104,7 +104,7 @@
                 android:visibility="visible" />
 
             <Button
-                android:id="@+id/bCheckIn"
+                android:id="@+id/btnCheckIn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"

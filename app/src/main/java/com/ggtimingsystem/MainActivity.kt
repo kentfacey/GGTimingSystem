@@ -2,6 +2,8 @@ package com.ggtimingsystem
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -57,5 +59,11 @@ class MainActivity : AppCompatActivity() {
         transaction.replace(R.id.container, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
+        Log.d("This works", "This works")
+    }
+
+    public fun openFragmentRun(view : View){
+        val runDetailsFragment = RunDetailsFragment.newInstance()
+        openFragment(runDetailsFragment)
     }
 }
