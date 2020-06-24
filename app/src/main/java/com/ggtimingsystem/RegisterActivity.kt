@@ -23,9 +23,8 @@ class RegisterActivity : AppCompatActivity() {
         already_have_account_text_view.setOnClickListener {
             Log.d("RegisterActivity", "Try to show login activity")
 
-            // Launch login activity
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+            // Go back to login activity
+            finish()
         }
 
     }

@@ -1,4 +1,4 @@
-package com.ggtimingsystem
+package com.ggtimingsystem.Main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import com.ggtimingsystem.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 // Top navigation bar and bottom navigation bar creation
@@ -20,7 +21,8 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
 
-        val homeFragment = HomeFragment.newInstance()
+        val homeFragment =
+            HomeFragment.newInstance()
         openFragment(homeFragment)
 
         val bottomNavigation: BottomNavigationView = findViewById(R.id.navigationView)
@@ -33,19 +35,22 @@ class MainActivity : AppCompatActivity() {
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener {item->
         when (item.itemId){
             R.id.navigation_home ->{
-                val homeFragment = HomeFragment.newInstance()
+                val homeFragment =
+                    HomeFragment.newInstance()
                 toolbar.title = "Home"
                 openFragment(homeFragment)
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_run -> {
-                val runFragment = RunFragment.newInstance()
+                val runFragment =
+                    RunFragment.newInstance()
                 toolbar.title = "Run"
                 openFragment(runFragment)
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_settings -> {
-                val settingsFragment = SettingsFragment.newInstance()
+                val settingsFragment =
+                    SettingsFragment.newInstance()
                 toolbar.title = "Settings"
                 openFragment(settingsFragment)
                 return@OnNavigationItemSelectedListener true
@@ -63,7 +68,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     public fun openFragmentRun(view : View){
-        val runDetailsFragment = RunDetailsFragment.newInstance()
+        val runDetailsFragment =
+            RunDetailsFragment.newInstance()
         openFragment(runDetailsFragment)
     }
 }

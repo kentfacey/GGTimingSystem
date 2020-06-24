@@ -1,11 +1,11 @@
-package com.ggtimingsystem
+package com.ggtimingsystem.Main
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import com.ggtimingsystem.R
 
 class RunFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -22,6 +22,7 @@ class RunFragment : Fragment() {
         super.onCreate(savedInstanceState)
     }
     companion object {
-        fun newInstance(): RunFragment = RunFragment()
+        fun newInstance(): RunFragment =
+            RunFragment()
     }
 }

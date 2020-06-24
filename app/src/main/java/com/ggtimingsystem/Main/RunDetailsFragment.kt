@@ -1,10 +1,11 @@
-package com.ggtimingsystem
+package com.ggtimingsystem.Main
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.ggtimingsystem.R
 
 /**
  * A simple [Fragment] subclass.
@@ -16,6 +17,7 @@ class RunDetailsFragment : Fragment() {
         inflater.inflate(R.layout.fragment_run_details, container, false)
 
     companion object {
-        fun newInstance(): RunDetailsFragment = RunDetailsFragment()
+        fun newInstance(): RunDetailsFragment =
+            RunDetailsFragment()
     }
 }
