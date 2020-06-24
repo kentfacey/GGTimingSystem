@@ -1,0 +1,77 @@
+{
+  "project_info": {
+    "project_number": "150059010768",
+    "firebase_url": "https://timing-systems.firebaseio.com",
+    "project_id": "timing-systems",
+    "storage_bucket": "timing-systems.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:150059010768:android:3c93860eb1a8ad93786cd5",
+        "android_client_info": {
+          "package_name": "com.e.ggtiming"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "150059010768-c3r0qf12v78vi8oq6emshmfenff9kgfs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzGVdyXvNtiDAluccgqBvAEVBa8KS3K6A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "150059010768-c3r0qf12v78vi8oq6emshmfenff9kgfs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:150059010768:android:5cd111fcb8e613a0786cd5",
+        "android_client_info": {
+          "package_name": "com.gsg.timingsystems"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "150059010768-m19ctsg628omi253635r26g2e3oareog.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gsg.timingsystems",
+            "certificate_hash": "e09548e51b42d2d025cdaef03154c96de6ef4fde"
+          }
+        },
+        {
+          "client_id": "150059010768-c3r0qf12v78vi8oq6emshmfenff9kgfs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzGVdyXvNtiDAluccgqBvAEVBa8KS3K6A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "150059010768-c3r0qf12v78vi8oq6emshmfenff9kgfs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
