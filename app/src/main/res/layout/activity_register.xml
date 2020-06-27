@@ -90,10 +90,22 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="60dp"
         android:background="@drawable/circle_button"
-        android:text="Add\nPicture"
+        android:text="Select\nPhoto"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/picture_image_view_register"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        app:civ_border_width="3dp"
+        app:layout_constraintBottom_toTopOf="@+id/username_edittext_register"
+        app:layout_constraintEnd_toEndOf="@+id/picture_button_register"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/picture_button_register"
+        app:layout_constraintTop_toTopOf="@+id/picture_button_register"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

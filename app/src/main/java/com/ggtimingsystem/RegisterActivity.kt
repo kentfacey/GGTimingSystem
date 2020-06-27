@@ -13,7 +13,10 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_register.*
+import java.util.*
 
 class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +49,7 @@ class RegisterActivity : AppCompatActivity() {
 
         if(requestCode == 0 && resultCode == Activity.RESULT_OK && data != null) {
             // photo has been selected
-            Log.d("Register", "Photo was selected")
+            Log.d("RegisterActivity", "Photo was selected")
             pictureUri = data.data
 
             //select photo from uri
@@ -61,16 +64,18 @@ class RegisterActivity : AppCompatActivity() {
                 }
             }
 
-            val bitmapDrawable = BitmapDrawable(bitmap)
-            picture_button_register.setBackgroundDrawable(bitmapDrawable)
+            picture_image_view_register.setImageBitmap(bitmap)
+
+            picture_button_register.alpha = 0f
         }
     }
 
     private fun performRegister() {
         val email = email_edittext_register.text.toString()
         val password = password_edittext_register.text.toString()
+        val username = username_edittext_register.text.toString()
 
-        if(email.isEmpty() || password.isEmpty()) {
+        if(email.isEmpty() || password.isEmpty() || username.isEmpty()) {
             Toast.makeText( this, "Email or password cannot be empty!", Toast.LENGTH_SHORT).show()
             return
         }
@@ -84,18 +89,57 @@ class RegisterActivity : AppCompatActivity() {
                 if (!it.isSuccessful) return@addOnCompleteListener
 
                 // else if successful
-                Log.d("Register", "Created user with uid: ${it.result?.user?.uid}")
+                Log.d("RegisterActivity", "Created user with uid: ${it.result?.user?.uid}")
                 Toast.makeText( this, "Create user with email: $email", Toast.LENGTH_SHORT).show()
-                uploadImageToFirebaseSorage()
+
+                if(pictureUri != null) {
+                    uploadImageToFirebaseStorage()
+                }
+                else {
+                    saveUserToFirebaseDatabase(pictureUri.toString())
+                }
+
 
             }
             .addOnFailureListener {
-                Log.d("Register", "Failed to create user: ${it.message}")
+                Log.d("RegisterActivity", "Failed to create user: ${it.message}")
                 Toast.makeText( this, "Failed to create user: ${it.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
-    private fun uploadImageToFirebaseSorage() {
+    private fun uploadImageToFirebaseStorage() {
+        if (pictureUri == null) return
+        val filename = UUID.randomUUID().toString()
+        val ref = FirebaseStorage.getInstance().getReference("/images/$filename")
 
+        ref.putFile(pictureUri!!)
+            .addOnSuccessListener {
+                Log.d("RegisterActivity", "Uploaded image: ${it.metadata?.path}")
+
+                ref.downloadUrl.addOnSuccessListener {
+                    Log.d("RegisterActivity", "File Location: $it")
+
+                    saveUserToFirebaseDatabase(it.toString())
+                }
+            }
+            .addOnFailureListener {
+                // failure
+            }
+    }
+
+    private fun saveUserToFirebaseDatabase(profileImageUrl: String) {
+        val uid = FirebaseAuth.getInstance().uid ?: ""
+        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+
+        val user = User(uid, username_edittext_register.text.toString(), profileImageUrl)
+        ref.setValue(user)
+            .addOnSuccessListener {
+                Log.d("RegisterActivity", "Saved user to the Firebase Database")
+            }
+            .addOnFailureListener {
+                // failure
+            }
     }
 }
+
+class User(val uid: String, val username:String, val profileImageUrl: String)

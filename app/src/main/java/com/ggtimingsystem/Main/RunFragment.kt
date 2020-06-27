@@ -10,12 +10,7 @@ import com.ggtimingsystem.R
 class RunFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        var rootView = inflater.inflate(R.layout.fragment_run, container, false)
-
-
-
-
-        return rootView
+        return inflater.inflate(R.layout.fragment_run, container, false)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
