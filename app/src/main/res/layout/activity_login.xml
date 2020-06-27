@@ -12,7 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_margin="50dp"
-        android:background="@color/white"
+        android:background="@drawable/rounded_edittext"
         android:ems="10"
         android:hint="Email"
         android:inputType="textEmailAddress"
@@ -30,7 +30,7 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
-        android:background="@color/white"
+        android:background="@drawable/rounded_edittext"
         android:ems="10"
         android:paddingLeft="16dp"
         android:hint="Password"
@@ -46,6 +46,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:background="@drawable/rounded_button"
+        android:textColor="@android:color/white"
         android:text="Login"
         app:layout_constraintEnd_toEndOf="@+id/password_edittext_login"
         app:layout_constraintHorizontal_bias="0.0"
@@ -53,17 +55,17 @@
         app:layout_constraintTop_toBottomOf="@+id/password_edittext_login" />
 
     <TextView
-        android:id="@+id/need_an_account_text_view"
+        android:id="@+id/need_an_account_text_view_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:text="Need an account?"
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/login_button_login"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="@+id/login_button_login"
         app:layout_constraintTop_toBottomOf="@+id/login_button_login" />
 

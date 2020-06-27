@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:150059010768:android:3c93860eb1a8ad93786cd5",
+        "mobilesdk_app_id": "1:150059010768:android:4e13adb6f7b8554b786cd5",
         "android_client_info": {
-          "package_name": "com.e.ggtiming"
+          "package_name": "com.ggtimingsystem"
         }
       },
       "oauth_client": [
