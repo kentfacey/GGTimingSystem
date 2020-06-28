@@ -3,7 +3,6 @@ package com.ggtimingsystem
 import android.app.Activity
 import android.content.Intent
 import android.graphics.ImageDecoder
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -29,8 +28,9 @@ class RegisterActivity : AppCompatActivity() {
         already_have_account_text_view_register.setOnClickListener {
             Log.d("RegisterActivity", "Try to show login activity")
 
-            // Go back to login activity
-            finish()
+            // Launch login activity
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
         }
         picture_button_register.setOnClickListener {
             Log.d("RegisterActivity", "Try to show photo selector")

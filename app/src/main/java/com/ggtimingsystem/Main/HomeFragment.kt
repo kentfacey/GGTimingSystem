@@ -12,7 +12,6 @@ class HomeFragment : Fragment() {
         inflater.inflate(R.layout.fragment_home, container, false)
 
     companion object {
-        fun newInstance(): HomeFragment =
-            HomeFragment()
+        fun newInstance(): HomeFragment = HomeFragment()
     }
 }

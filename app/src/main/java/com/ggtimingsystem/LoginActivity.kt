@@ -24,9 +24,8 @@ class LoginActivity : AppCompatActivity() {
         need_an_account_text_view_login.setOnClickListener {
             Log.d("LoginActivity", "Try to show register activity")
 
-            // Launch login activity
-            val intent = Intent(this, RegisterActivity::class.java)
-            startActivity(intent)
+            // go back to register activity
+            finish()
         }
 
     }
@@ -48,7 +47,7 @@ class LoginActivity : AppCompatActivity() {
 
                 // else if successful
                 val intent = Intent(this, MainActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_TASK_ON_HOME
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
                 finish()
 
