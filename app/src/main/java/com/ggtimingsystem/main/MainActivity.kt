@@ -1,17 +1,16 @@
-package com.ggtimingsystem.Main
+package com.ggtimingsystem.main
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.ggtimingsystem.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_main.*
 
 // Top navigation bar and bottom navigation bar creation
 class MainActivity : AppCompatActivity() {
@@ -22,6 +21,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         verifyUserIsLoggedIn()
+
+        // sign out user
+        main_toolbar_sign_out.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+            val intent = Intent(this, RegisterActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+        }
 
         toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.title = "Home"
@@ -45,25 +52,6 @@ class MainActivity : AppCompatActivity() {
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         }
-    }
-
-    // adds button to the top of the navigation bar
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.navigation, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    // when selecting menu item
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item?.itemId) {
-            R.id.navigation_sign_out -> {
-                FirebaseAuth.getInstance().signOut()
-                val intent = Intent(this, RegisterActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     // Selects the fragment based on the bottom navigation bar
@@ -102,9 +90,8 @@ class MainActivity : AppCompatActivity() {
         Log.d("This works", "This works")
     }
 
-    public fun openFragmentRun(view : View){
-        val runDetailsFragment =
-            RunDetailsFragment.newInstance()
-        openFragment(runDetailsFragment)
+    public fun openJoinRun(view : View){
+        val intent = Intent(this, AvailableRunsActivity::class.java)
+        startActivity(intent)
     }
 }

@@ -1,4 +1,4 @@
-package com.ggtimingsystem.Main
+package com.ggtimingsystem.main
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

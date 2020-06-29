@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.ggtimingsystem"
-        minSdkVersion 23
+        minSdkVersion 26
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -34,6 +34,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:19.3.1'
 
     implementation 'de.hdodenhof:circleimageview:2.2.0'
+    implementation 'com.xwray:groupie:2.1.0'
+    implementation 'com.squareup.picasso:picasso:2.71828'
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"

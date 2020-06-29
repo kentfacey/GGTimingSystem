@@ -11,10 +11,13 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import com.ggtimingsystem.model.Run
+import com.ggtimingsystem.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_register.*
+import java.time.LocalDateTime
 import java.util.*
 
 class RegisterActivity : AppCompatActivity() {
@@ -127,7 +130,17 @@ class RegisterActivity : AppCompatActivity() {
             }
     }
 
+    // test create run in saveUserToFirebaseDatabase
+    private fun createRun() {
+        val uid = UUID.randomUUID().toString()
+        val ref = FirebaseDatabase.getInstance().getReference("runs/$uid")
+        val date = LocalDateTime.now().toString()
+        val run = Run(uid, date, 5, 100, 150, false)
+        ref.setValue(run)
+    }
+
     private fun saveUserToFirebaseDatabase(profileImageUrl: String) {
+        createRun()
         val uid = FirebaseAuth.getInstance().uid ?: ""
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
 
@@ -141,5 +154,3 @@ class RegisterActivity : AppCompatActivity() {
             }
     }
 }
-
-class User(val uid: String, val username:String, val profileImageUrl: String)
