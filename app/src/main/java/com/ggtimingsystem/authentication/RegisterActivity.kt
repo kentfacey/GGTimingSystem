@@ -1,4 +1,4 @@
-package com.ggtimingsystem
+package com.ggtimingsystem.authentication
 
 import android.app.Activity
 import android.content.Intent
@@ -11,8 +11,9 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import com.ggtimingsystem.model.Run
-import com.ggtimingsystem.model.User
+import com.ggtimingsystem.R
+import com.ggtimingsystem.models.Run
+import com.ggtimingsystem.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage

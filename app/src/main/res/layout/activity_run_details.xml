@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+
+    tools:context=".run.RunDetailsActivity">
+
+    <TextView
+        android:id="@+id/date_textview_runDetails"
+        style="@style/h1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/date"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/time_textview_runDetails"
+        style="@style/h1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:padding="0sp"
+        android:paddingTop="20sp"
+        android:text="@string/time"
+        app:layout_constraintStart_toEndOf="@+id/imageView7"
+        app:layout_constraintTop_toBottomOf="@+id/date_textview_runDetails" />
+
+    <TextView
+        android:id="@+id/startWarning_textview_runDetails"
+        style="@style/warning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/timeUntilStart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.855"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/time_textview_runDetails"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/miles_textview_runDetails"
+        style="@style/h1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/distance"
+        app:layout_constraintStart_toStartOf="@+id/time_textview_runDetails"
+        app:layout_constraintTop_toBottomOf="@+id/startWarning_textview_runDetails" />
+
+    <TextView
+        android:id="@+id/people_textview_runDetails"
+        style="@style/h1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/attendance"
+        app:layout_constraintStart_toStartOf="@+id/miles_textview_runDetails"
+        app:layout_constraintTop_toBottomOf="@+id/miles_textview_runDetails" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="404dp"
+        android:layout_height="253dp"
+        android:orientation="horizontal"
+        android:paddingTop="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/people_textview_runDetails">
+
+        <Button
+            android:id="@+id/joinRun_button_runDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_weight="1"
+            android:background="@color/colorAccent"
+            android:padding="40sp"
+            android:text="Join Run"
+            android:textColor="@color/white"
+            android:textSize="30sp"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/leave_button_runDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@color/warning"
+            android:padding="40sp"
+            android:text="Leave"
+            android:textColor="@color/white"
+            android:textSize="25sp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/checkIn_button_runDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@color/lightBlue"
+            android:padding="40sp"
+            android:text="Check-In"
+            android:textSize="25sp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="69dp"
+        android:layout_height="69dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/ic_baseline_transfer_within_a_station_24"
+        app:layout_constraintBottom_toBottomOf="@+id/miles_textview_runDetails"
+        app:layout_constraintEnd_toEndOf="@+id/imageView7"
+        app:layout_constraintHorizontal_bias="0.437"
+        app:layout_constraintStart_toStartOf="@+id/imageView7"
+        app:layout_constraintTop_toBottomOf="@+id/time_textview_runDetails"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="70dp"
+        android:layout_height="69dp"
+        android:src="@drawable/ic_baseline_people_24"
+        app:layout_constraintBottom_toBottomOf="@+id/people_textview_runDetails"
+        app:layout_constraintEnd_toEndOf="@+id/imageView2"
+        app:layout_constraintStart_toStartOf="@+id/imageView2"
+        app:layout_constraintTop_toTopOf="@+id/people_textview_runDetails" />
+
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="53dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="52dp"
+        android:src="@drawable/ic_baseline_access_time_24"
+        app:layout_constraintBottom_toBottomOf="@+id/time_textview_runDetails"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/date_textview_runDetails" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,6 +8,8 @@ import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.ggtimingsystem.*
+import com.ggtimingsystem.authentication.RegisterActivity
+import com.ggtimingsystem.run.AvailableRunsActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*

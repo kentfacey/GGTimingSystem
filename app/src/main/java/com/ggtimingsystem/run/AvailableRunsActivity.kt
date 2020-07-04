@@ -1,9 +1,12 @@
-package com.ggtimingsystem
+package com.ggtimingsystem.run
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import com.ggtimingsystem.model.Run
+import com.ggtimingsystem.R
+import com.ggtimingsystem.list.ScheduledRunInfoRow
+import com.ggtimingsystem.models.Run
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -19,11 +22,12 @@ class AvailableRunsActivity : AppCompatActivity() {
 
         supportActionBar?.title = "Available Runs"
 
-        val adapter = GroupAdapter<ViewHolder>()
-        recyclerview_availableruns.adapter = adapter
-
         fetchScheduledRuns()
 
+    }
+
+    companion object {
+        const val RUN_KEY = "RUN_KEY"
     }
 
     private fun fetchScheduledRuns() {
@@ -37,9 +41,23 @@ class AvailableRunsActivity : AppCompatActivity() {
                     Log.d("AvailableRuns", it.toString())
                     val run = it.getValue(Run::class.java)
                     if(run != null) {
-                        adapter.add(ScheduledRunInfoRow(run))
+                        adapter.add(
+                            ScheduledRunInfoRow(
+                                run
+                            )
+                        )
                     }
                 }
+                adapter.setOnItemClickListener { item, view ->
+                    val runItem = item as ScheduledRunInfoRow
+
+                    val intent = Intent(view.context, RunDetailsActivity::class.java)
+                    intent.putExtra(RUN_KEY, runItem.run)
+                    startActivity(intent)
+                    finish()
+
+                }
+                
                 recyclerview_availableruns.adapter = adapter
             }
 

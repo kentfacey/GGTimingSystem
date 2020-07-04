@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/lightBlue"
-    tools:context=".RegisterActivity">
+    tools:context=".authentication.RegisterActivity">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout

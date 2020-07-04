@@ -1,14 +1,14 @@
-package com.ggtimingsystem
+package com.ggtimingsystem.list
 
-import android.annotation.SuppressLint
-import com.ggtimingsystem.model.Run
+import com.ggtimingsystem.R
+import com.ggtimingsystem.models.Run
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.schedule_info_row.view.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class ScheduledRunInfoRow(private val run: Run): Item<ViewHolder>() {
+class ScheduledRunInfoRow(val run: Run): Item<ViewHolder>() {
     override fun bind(viewHolder: ViewHolder, position: Int) {
         // sets date as day month year
         val formatter = DateTimeFormatter.ofPattern("MMM d, uuuu")
@@ -26,7 +26,6 @@ class ScheduledRunInfoRow(private val run: Run): Item<ViewHolder>() {
         // sets time of day
         val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
         viewHolder.itemView.time_textview_schedule_info_row.text = date.format(timeFormatter)
-
 
     }
 
