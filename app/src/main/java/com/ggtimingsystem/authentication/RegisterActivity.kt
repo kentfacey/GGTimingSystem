@@ -12,6 +12,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.ggtimingsystem.R
+import com.ggtimingsystem.database.Database
 import com.ggtimingsystem.models.Run
 import com.ggtimingsystem.models.User
 import com.google.firebase.auth.FirebaseAuth
@@ -19,9 +20,16 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_register.*
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.*
 
 class RegisterActivity : AppCompatActivity() {
+
+    private var pictureUri: Uri? = null
+
+    private val database = Database()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
@@ -44,8 +52,6 @@ class RegisterActivity : AppCompatActivity() {
             startActivityForResult(intent, 0)
         }
     }
-
-    var pictureUri: Uri? = null
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -111,6 +117,7 @@ class RegisterActivity : AppCompatActivity() {
             }
     }
 
+    // uploads an image to the firebase storage
     private fun uploadImageToFirebaseStorage() {
         if (pictureUri == null) return
         val filename = UUID.randomUUID().toString()
@@ -131,27 +138,16 @@ class RegisterActivity : AppCompatActivity() {
             }
     }
 
-    // test create run in saveUserToFirebaseDatabase
-    private fun createRun() {
-        val uid = UUID.randomUUID().toString()
-        val ref = FirebaseDatabase.getInstance().getReference("runs/$uid")
-        val date = LocalDateTime.now().toString()
-        val run = Run(uid, date, 5, 100, 150, false)
-        ref.setValue(run)
-    }
 
     private fun saveUserToFirebaseDatabase(profileImageUrl: String) {
-        createRun()
-        val uid = FirebaseAuth.getInstance().uid ?: ""
-        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
 
-        val user = User(uid, username_edittext_register.text.toString(), profileImageUrl)
-        ref.setValue(user)
-            .addOnSuccessListener {
-                Log.d("RegisterActivity", "Saved user to the Firebase Database")
-            }
-            .addOnFailureListener {
-                // failure
-            }
+        // calls the test create run method when saving a user to the database
+        database.createRun()
+
+        val uid = FirebaseAuth.getInstance().uid ?: ""
+        val username = username_edittext_register.text.toString()
+
+        database.saveUser(uid, profileImageUrl, username)
+
     }
 }

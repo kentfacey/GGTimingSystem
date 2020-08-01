@@ -5,18 +5,25 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import com.ggtimingsystem.R
-import com.ggtimingsystem.main.MainActivity
+import com.ggtimingsystem.database.Database
 import com.ggtimingsystem.models.Run
+import com.ggtimingsystem.models.RunUserItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_run_details.*
-import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.Result.Companion.failure
 
 class RunDetailsActivity : AppCompatActivity() {
+
+    private val database = Database()
+    companion object{
+        const val RUN_KEY = "RUN_KEY"
+        var complete = false
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_run_details)
@@ -32,25 +39,27 @@ class RunDetailsActivity : AppCompatActivity() {
         setUpButtons(run)
         Log.d("RunDetailsActivity","Buttons set up")
 
+
     }
 
     // sets up layout for run details
     private fun setUpLayout(run: Run) {
         // sets date as day month year
-        val formatter = DateTimeFormatter.ofPattern("MMM d, uuuu")
-        val date = LocalDateTime.parse(run.date)
-        date_textview_runDetails.text = date.format(formatter)
+        val formatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
+        val date = ZonedDateTime.parse(run.date)
+        val localZoneDate = date.withZoneSameInstant(ZoneId.of("America/New_York"))
+        date_textview_runDetails.text = localZoneDate.format(formatter)
 
-        // sets miles
-        val milesString = run.miles.toString() + " miles"
-        miles_textview_runDetails.text = milesString
+        // sets distance in kilometers
+        val distanceString = run.distance.toString() + " km"
+        distance_textview_runDetails.text = distanceString
 
         // sets people
         setPeople(run)
 
         // sets time of day
-        val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
-        time_textview_runDetails.text = date.format(timeFormatter)
+        val timeFormatter = DateTimeFormatter.ofPattern("h:mm a")
+        time_textview_runDetails.text = localZoneDate.format(timeFormatter)
 
         // start warning
         startWarning_textview_runDetails
@@ -66,14 +75,20 @@ class RunDetailsActivity : AppCompatActivity() {
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
+
+                if(!snapshot.exists()){
+                    return
+                }
                 // if the current people changes
-                var peopleString = refCurrentPeople.toString() + "/" + run.maxPeople
+                val snapshotValue = snapshot.getValue(Int::class.java)
+                Log.d("RunDetailsActivity", "Snapshot: $snapshotValue")
+                val snapshotString = snapshotValue.toString()
+
+                val peopleString = snapshotString + "/" + run.maxPeople
+
                 people_textview_runDetails.text = peopleString
 
-                run.currentPeople = refCurrentPeople.toString().toInt()
-
                 Log.d("RunDetailsActivity", "Current people: " + run.currentPeople)
-
             }
         })
         Log.d("RunDetailsActivity","People set up")
@@ -88,8 +103,33 @@ class RunDetailsActivity : AppCompatActivity() {
 
         joinRun_button_runDetails.setOnClickListener {
             Log.d("RunDetailsActivity","join run button clicked")
-            addToRun(userId, run)
+            database.addToRun(run.uid)
         }
+
+        leave_button_runDetails.setOnClickListener {
+            Log.d("RunDetailsActivity","leave button clicked")
+            database.leaveRun(run.uid)
+        }
+
+        checkIn_button_runDetails.setOnClickListener {
+            Log.d("RunDetailsActivity","checkIn button clicked")
+            checkIn(run)
+        }
+
+
+    }
+
+    private fun checkIn(run: Run) {
+
+        database.saveCheckIn(run.uid, true)
+
+
+        val intent = Intent(this, ActiveRunActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.putExtra(RunDetailsActivity.RUN_KEY, run)
+        startActivity(intent)
+
+
     }
 
     // returns true if the user is in the race, sets visibility of control buttons
@@ -106,17 +146,25 @@ class RunDetailsActivity : AppCompatActivity() {
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 // if the users id is in the runs set of users
-                if(snapshot.exists()){
-                    isInRun = true
-                    joinRun_button_runDetails.visibility = View.GONE
-                    leave_button_runDetails.visibility = View.VISIBLE
-                    checkIn_button_runDetails.visibility = View.VISIBLE
-                }
-                else{
-                    isInRun = false
-                    joinRun_button_runDetails.visibility = View.VISIBLE
-                    leave_button_runDetails.visibility = View.GONE
-                    checkIn_button_runDetails.visibility = View.GONE
+                when {
+                    complete -> {
+                        viewResults_button_runDetails.visibility = View.VISIBLE
+                        joinRun_button_runDetails.visibility = View.GONE
+                        leave_button_runDetails.visibility = View.GONE
+                        checkIn_button_runDetails.visibility = View.GONE
+                    }
+                    snapshot.exists() -> {
+                        isInRun = true
+                        joinRun_button_runDetails.visibility = View.GONE
+                        leave_button_runDetails.visibility = View.VISIBLE
+                        checkIn_button_runDetails.visibility = View.VISIBLE
+                    }
+                    else -> {
+                        isInRun = false
+                        joinRun_button_runDetails.visibility = View.VISIBLE
+                        leave_button_runDetails.visibility = View.GONE
+                        checkIn_button_runDetails.visibility = View.GONE
+                    }
                 }
             }
         })
@@ -124,46 +172,7 @@ class RunDetailsActivity : AppCompatActivity() {
         return isInRun
     }
 
-    // adds user to the run
-    private fun addToRun(userId: String?, run: Run) {
-        if(userInRun(userId, run.uid)) {
-            return
-        }
 
-        val ref = FirebaseDatabase.getInstance().getReference("/runs/${run.uid}/users/$userId")
-        val runRef = FirebaseDatabase.getInstance().getReference("/runs/${run.uid}")
-
-        // runs if there is an open slot to join
-        runRef.runTransaction(object : Transaction.Handler {
-            override fun doTransaction(currentData: MutableData): Transaction.Result {
-                val currentRun = currentData.getValue(Run::class.java) ?: return Transaction.success(currentData)
-                if(currentRun.currentPeople < currentRun.maxPeople){
-                    currentRun.currentPeople = currentRun.currentPeople + 1
-                    currentRun.userIds.add(userId!!)
-                }
-                else{
-                    // aborts if there is not enough slots to join
-                    Toast.makeText( this@RunDetailsActivity, "Failed to Join Run: Not enough slots!", Toast.LENGTH_SHORT).show()
-                    return Transaction.abort()
-                }
-                currentData.value = currentRun
-
-                return Transaction.success(currentData)
-            }
-            override fun onComplete(
-                error: DatabaseError?,
-                committed: Boolean,
-                currentData: DataSnapshot?
-            ) {
-                // Transaction completed
-                Log.d("RunDetailsActivity","postTransaction:onComplete:" + error!!)
-            }
-        })
-
-
-
-
-    }
 
 }
 
