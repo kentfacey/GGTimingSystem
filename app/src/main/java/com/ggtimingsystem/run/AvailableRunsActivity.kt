@@ -14,6 +14,10 @@ import com.google.firebase.database.ValueEventListener
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_available_runs.*
+import java.time.Duration
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import kotlin.math.abs
 
 class AvailableRunsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,9 +46,7 @@ class AvailableRunsActivity : AppCompatActivity() {
                     val run = it.getValue(Run::class.java)
                     if(run != null) {
                         adapter.add(
-                            ScheduledRunInfoRow(
-                                run
-                            )
+                            ScheduledRunInfoRow(run)
                         )
                     }
                 }

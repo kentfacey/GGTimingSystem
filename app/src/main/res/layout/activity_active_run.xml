@@ -109,7 +109,7 @@
         app:layout_constraintTop_toBottomOf="@+id/progressBar_activity_active_run" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/leaveRun_button_active_run"
         android:layout_width="314dp"
         android:layout_height="61dp"
         android:layout_marginBottom="104dp"

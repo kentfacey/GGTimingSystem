@@ -2,6 +2,11 @@ package com.ggtimingsystem.models
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
+import java.time.Duration
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import kotlin.math.abs
 
 @Parcelize
 class Run
@@ -12,8 +17,51 @@ class Run
         var currentPeople: Int = 0,
         val maxPeople: Int = 0,
         var numCheckedIn: Int = 0,
-        var complete: Boolean = false,
         var users: MutableMap<String, RunUserItem> = mutableMapOf(),
-        val timeOut: Long = 2
+        val timeOut: Long = 120 // in minutes
     ) : Parcelable{
+
+
+    // returns true if the run is complete
+    fun isComplete(): Boolean {
+        val durationBetween = Duration.between(ZonedDateTime.now(ZoneId.of("UTC")), ZonedDateTime.parse(date))
+        val diff = abs(durationBetween.toMinutes())
+
+        return diff > timeOut
+    }
+
+    // returns true if the run is in progress
+    fun inProgress(): Boolean {
+        val durationBetween = Duration.between(ZonedDateTime.now(ZoneId.of("UTC")), ZonedDateTime.parse(date))
+        val diff = abs(durationBetween.toMinutes())
+
+        return diff in 0 until timeOut
+    }
+
+    // returns date as a string
+    fun dateString(): String {
+        // sets date as day month year
+        val formatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
+        val date = ZonedDateTime.parse(date)
+        val localZoneDate = date.withZoneSameInstant(ZoneId.of("America/New_York"))
+        return localZoneDate.format(formatter)
+    }
+
+    fun timeOfDayString(): String {
+        // sets time of day
+        val timeFormatter = DateTimeFormatter.ofPattern("h:mm a")
+        val date = ZonedDateTime.parse(date)
+        val localZoneDate = date.withZoneSameInstant(ZoneId.of("America/New_York"))
+        return localZoneDate.format(timeFormatter)
+    }
+
+    // returns miles as a string
+    fun distanceString(): String {
+        return "$distance km"
+    }
+
+    // returns people in race as a string
+    fun totalPeopleString(): String {
+        return "$currentPeople/$maxPeople"
+    }
 }

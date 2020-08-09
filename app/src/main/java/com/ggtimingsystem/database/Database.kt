@@ -1,19 +1,11 @@
 package com.ggtimingsystem.database
 
-import android.content.Intent
 import android.util.Log
-import com.ggtimingsystem.list.ScheduledRunInfoRow
 import com.ggtimingsystem.models.Run
 import com.ggtimingsystem.models.RunUserItem
 import com.ggtimingsystem.models.User
-import com.ggtimingsystem.run.AvailableRunsActivity
-import com.ggtimingsystem.run.RunDetailsActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.ViewHolder
-import kotlinx.android.synthetic.main.activity_available_runs.*
-import kotlinx.android.synthetic.main.activity_register.*
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
@@ -28,27 +20,73 @@ open class Database {
     fun createRun() {
         val uid = UUID.randomUUID().toString()
         val ref = FirebaseDatabase.getInstance().getReference("runs/$uid")
-        val date = ZonedDateTime.now(ZoneId.of("UTC")).toString()
-        val run = Run(uid, date, 5.0, 100, 150)
+        var date = ZonedDateTime.now(ZoneId.of("UTC"))
+        //date = date.plusMinutes(20)
+        val dateString = date.toString()
+        val run = Run(uid, dateString, 5.0, 100, 150)
         ref.setValue(run)
     }
 
     // save user distance in a run
     fun saveDistance(distance: Double, runId: String) {
-        val ref = FirebaseDatabase.getInstance().getReference("/runs/$runId/users/$userId/distance")
-        ref.setValue(distance)
+        val ref = FirebaseDatabase.getInstance().getReference("/runs/$runId/users/$userId")
+        val distanceListener = object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if(snapshot.exists()) {
+                    ref.child("distance").setValue(distance)
+                }
+            }
+
+        }
+
+        ref.addListenerForSingleValueEvent(distanceListener)
+
     }
 
     // returns the users distance in a run
-    fun getDistance(distance: Double, runId: String) {
+    fun getDistance(runId: String): Double {
         val ref = FirebaseDatabase.getInstance().getReference("/runs/$runId/users/$userId/distance")
-        
+        var distance = 0.0
+        val distanceListener = object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if(snapshot.exists()) {
+                    val num = snapshot.value as Number
+                    distance = num.toDouble()
+                    Log.d("Database", "Double read $distance")
+                }
+            }
+
+        }
+
+        ref.addListenerForSingleValueEvent(distanceListener)
+        return distance
     }
 
     // save the users time in the run at the end of the run
     fun saveTime(time: ZonedDateTime, runId: String) {
-        val ref = FirebaseDatabase.getInstance().getReference("/runs/$runId/users/$userId/time")
-        ref.setValue(time.toString())
+        val ref = FirebaseDatabase.getInstance().getReference("/runs/$runId/users/$userId")
+        val timeListener = object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if(snapshot.exists()) {
+                    ref.child("time").setValue(time.toString())
+                }
+            }
+
+        }
+
+        ref.addListenerForSingleValueEvent(timeListener)
     }
 
     // save check-in status in a run
@@ -85,7 +123,7 @@ open class Database {
                 if(currentRun.currentPeople < currentRun.maxPeople){
 
                     // put user into run
-                    currentRun.users[userId!!] = RunUserItem(userId)
+                    currentRun.users[userId] = RunUserItem(userId)
 
                     // increase people value
                     currentRun.currentPeople = currentRun.currentPeople + 1

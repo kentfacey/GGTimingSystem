@@ -1,6 +1,7 @@
 package com.ggtimingsystem.run
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -12,7 +13,11 @@ import com.ggtimingsystem.R
 import com.ggtimingsystem.database.Database
 import com.ggtimingsystem.models.Run
 import com.google.android.gms.location.*
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_active_run.*
 import java.time.Duration.between
 import java.time.ZoneId
@@ -48,6 +53,9 @@ class ActiveRunActivity : AppCompatActivity() {
         run = intent.getParcelableExtra<Run>(RunDetailsActivity.RUN_KEY)
         startTime = ZonedDateTime.parse(run.date)
 
+        getDistance()
+
+        setUpButtons()
 
         setUpLayout()
 
@@ -58,12 +66,57 @@ class ActiveRunActivity : AppCompatActivity() {
 
     }
 
+    // creates the functions for the buttons in the activity
+    private fun setUpButtons() {
+        leaveRun_button_active_run.setOnClickListener {
+            val intent = Intent(this, RunDetailsActivity::class.java)
+            intent.putExtra(AvailableRunsActivity.RUN_KEY, run)
+            startActivity(intent)
+            finish()
+        }
+    }
+
+
+    // retrieves the current distance from the database
+    private fun getDistance(){
+        val userId = FirebaseAuth.getInstance().uid ?: ""
+        // sets the distance to the current distance run in the database, important if they leave the run and come back
+        val ref = FirebaseDatabase.getInstance().getReference("/runs/${run.uid}/users/$userId/distance")
+        val distanceListener = object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if(snapshot.exists()) {
+                    val num = snapshot.value as Number
+                    distance = num.toDouble()
+                    Log.d("Database", "Double read $distance")
+                }
+            }
+
+        }
+
+        ref.addListenerForSingleValueEvent(distanceListener)
+
+        //distance = database.getDistance(run.uid)
+        Log.d("ActiveRunActivity", "Distance = $distance")
+
+        /**
+         * //TODO: get the distance from the database class (and have this thread wait for the function to complete) instead of on the current thread
+        distance = database.getDistance(run.uid)
+        */
+    }
 
     // sets up the layout such as the progress bar
     private fun setUpLayout() {
-        val runDistanceString = "${run.distance} km"
-        endDistance_active_run.text = runDistanceString
-        progressBar_activity_active_run.max = (run.distance * 100).toInt()
+        var twoDecimalDistance = displayDistance()
+        endDistance_active_run.text = run.distanceString()
+        progressBar_activity_active_run.max = (run.distance * 100).toInt() // because progress bar does not have decimals it is multiplied by a factor of 100
+
+        // sets the progress bar to the current distance run
+        progressBar_activity_active_run.progress = (twoDecimalDistance * 100).toInt()
+        distance_textview_active_run.text = twoDecimalDistance.toString()
 
     }
 
@@ -135,7 +188,7 @@ class ActiveRunActivity : AppCompatActivity() {
     private fun updateLayout() {
 
         // distance to be displayed in layout
-        var twoDecimalDistance = (distance*100).toInt()/100.0 // truncated to the nearest 2 decimals
+        var twoDecimalDistance = displayDistance()
 
         // if the distance ran is greater than the runs distance, you finished the race
         if(distance >= run.distance) {
@@ -156,6 +209,10 @@ class ActiveRunActivity : AppCompatActivity() {
         time_textview_active_run.text = timeDifferenceMinutes().toString()
     }
 
+    // distance to be displayed in layout
+    private fun displayDistance(): Double {
+        return (distance *100).toInt()/100.0
+    }
     // calculates the difference in the current time to the start time of the race and returns the minutes
     private fun timeDifferenceMinutes() : Double {
 

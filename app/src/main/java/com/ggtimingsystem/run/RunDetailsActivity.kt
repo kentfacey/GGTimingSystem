@@ -21,7 +21,7 @@ class RunDetailsActivity : AppCompatActivity() {
     private val database = Database()
     companion object{
         const val RUN_KEY = "RUN_KEY"
-        var complete = false
+        lateinit var run: Run
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,42 +31,37 @@ class RunDetailsActivity : AppCompatActivity() {
         Log.d("RunDetailsActivity","Run Details Activity Started")
         supportActionBar?.title = "Run Details"
 
-        val run = intent.getParcelableExtra<Run>(AvailableRunsActivity.RUN_KEY)
+        run = intent.getParcelableExtra<Run>(AvailableRunsActivity.RUN_KEY)
 
-        setUpLayout(run)
+        setUpLayout()
         Log.d("RunDetailsActivity","Layout set up")
 
-        setUpButtons(run)
+        setUpButtons()
         Log.d("RunDetailsActivity","Buttons set up")
 
 
     }
 
     // sets up layout for run details
-    private fun setUpLayout(run: Run) {
+    private fun setUpLayout() {
         // sets date as day month year
-        val formatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
-        val date = ZonedDateTime.parse(run.date)
-        val localZoneDate = date.withZoneSameInstant(ZoneId.of("America/New_York"))
-        date_textview_runDetails.text = localZoneDate.format(formatter)
+        date_textview_runDetails.text = run.dateString()
 
         // sets distance in kilometers
-        val distanceString = run.distance.toString() + " km"
-        distance_textview_runDetails.text = distanceString
+        distance_textview_runDetails.text = run.distanceString()
 
         // sets people
-        setPeople(run)
+        setPeople()
 
         // sets time of day
-        val timeFormatter = DateTimeFormatter.ofPattern("h:mm a")
-        time_textview_runDetails.text = localZoneDate.format(timeFormatter)
+        time_textview_runDetails.text = run.timeOfDayString()
 
         // start warning
         startWarning_textview_runDetails
     }
 
     // sets the people
-    private fun setPeople(run: Run) {
+    private fun setPeople() {
         // listens to see if current people changes
         val refCurrentPeople = FirebaseDatabase.getInstance().getReference("/runs/${run.uid}/currentPeople")
         refCurrentPeople.addValueEventListener(object : ValueEventListener {
@@ -95,11 +90,11 @@ class RunDetailsActivity : AppCompatActivity() {
     }
 
     // sets up buttons
-    private fun setUpButtons(run: Run) {
+    private fun setUpButtons() {
         val userId = FirebaseAuth.getInstance().uid
 
         // sets up button visibility
-        userInRun(userId, run.uid)
+        userInRun(userId)
 
         joinRun_button_runDetails.setOnClickListener {
             Log.d("RunDetailsActivity","join run button clicked")
@@ -113,13 +108,13 @@ class RunDetailsActivity : AppCompatActivity() {
 
         checkIn_button_runDetails.setOnClickListener {
             Log.d("RunDetailsActivity","checkIn button clicked")
-            checkIn(run)
+            checkIn()
         }
 
 
     }
 
-    private fun checkIn(run: Run) {
+    private fun checkIn() {
 
         database.saveCheckIn(run.uid, true)
 
@@ -133,11 +128,9 @@ class RunDetailsActivity : AppCompatActivity() {
     }
 
     // returns true if the user is in the race, sets visibility of control buttons
-    private fun userInRun(userId: String?, runId: String?) : Boolean {
+    private fun userInRun(userId: String?) {
         // location of user in database
-        val ref = FirebaseDatabase.getInstance().getReference("/runs/$runId/users/$userId")
-
-        var isInRun = false
+        val ref = FirebaseDatabase.getInstance().getReference("/runs/${run.uid}/users/$userId")
 
         ref.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
@@ -147,20 +140,20 @@ class RunDetailsActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 // if the users id is in the runs set of users
                 when {
-                    complete -> {
+                    run.isComplete() -> {
                         viewResults_button_runDetails.visibility = View.VISIBLE
                         joinRun_button_runDetails.visibility = View.GONE
                         leave_button_runDetails.visibility = View.GONE
                         checkIn_button_runDetails.visibility = View.GONE
                     }
+                    // if the user is in the run
                     snapshot.exists() -> {
-                        isInRun = true
                         joinRun_button_runDetails.visibility = View.GONE
                         leave_button_runDetails.visibility = View.VISIBLE
                         checkIn_button_runDetails.visibility = View.VISIBLE
                     }
+                    // if the user is not in the run
                     else -> {
-                        isInRun = false
                         joinRun_button_runDetails.visibility = View.VISIBLE
                         leave_button_runDetails.visibility = View.GONE
                         checkIn_button_runDetails.visibility = View.GONE
@@ -168,8 +161,6 @@ class RunDetailsActivity : AppCompatActivity() {
                 }
             }
         })
-
-        return isInRun
     }
 
 
