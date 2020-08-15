@@ -40,7 +40,12 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
+        // Firebase signIn
+        signInWithEmailAndPassword(email, password)
+    }
 
+    // Firebase signIn
+    private fun signInWithEmailAndPassword(email: String, password: String){
         // Firebase signIn
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
             .addOnCompleteListener {

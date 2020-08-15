@@ -10,7 +10,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".run.ActiveRunActivity" />
+        <activity android:name=".run.active.ActiveRunActivity" />
         <activity android:name=".run.RunDetailsActivity" />
         <activity android:name=".run.AvailableRunsActivity">
             <meta-data

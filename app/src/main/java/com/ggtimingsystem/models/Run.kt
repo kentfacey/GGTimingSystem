@@ -1,6 +1,7 @@
 package com.ggtimingsystem.models
 
 import android.os.Parcelable
+import android.util.Log
 import kotlinx.android.parcel.Parcelize
 import java.time.Duration
 import java.time.ZoneId
@@ -24,16 +25,16 @@ class Run
 
     // returns true if the run is complete
     fun isComplete(): Boolean {
-        val durationBetween = Duration.between(ZonedDateTime.now(ZoneId.of("UTC")), ZonedDateTime.parse(date))
-        val diff = abs(durationBetween.toMinutes())
+        val durationBetween = Duration.between(ZonedDateTime.parse(date), ZonedDateTime.now(ZoneId.of("UTC")))
+        val diff = durationBetween.toMinutes()
 
         return diff > timeOut
     }
 
     // returns true if the run is in progress
     fun inProgress(): Boolean {
-        val durationBetween = Duration.between(ZonedDateTime.now(ZoneId.of("UTC")), ZonedDateTime.parse(date))
-        val diff = abs(durationBetween.toMinutes())
+        val durationBetween = Duration.between(ZonedDateTime.parse(date), ZonedDateTime.now(ZoneId.of("UTC")))
+        val diff = durationBetween.toMinutes()
 
         return diff in 0 until timeOut
     }

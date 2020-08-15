@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/progress_navigation_active_run"
+        android:icon="@drawable/ic_baseline_directions_run_24"
+        android:title="Progress"/>
+
+    <item
+        android:id="@+id/runners_navigation_active_run"
+        android:icon="@drawable/ic_baseline_people_24"
+        android:title="Position"/>
+</menu>

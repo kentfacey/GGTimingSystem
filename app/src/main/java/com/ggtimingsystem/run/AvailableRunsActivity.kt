@@ -14,10 +14,6 @@ import com.google.firebase.database.ValueEventListener
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_available_runs.*
-import java.time.Duration
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import kotlin.math.abs
 
 class AvailableRunsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,31 +32,66 @@ class AvailableRunsActivity : AppCompatActivity() {
 
     private fun fetchScheduledRuns() {
         val ref = FirebaseDatabase.getInstance().getReference("/runs")
+        ref.orderByChild("date")
         ref.addListenerForSingleValueEvent(object: ValueEventListener {
 
             override fun onDataChange(p0: DataSnapshot) {
-                val adapter = GroupAdapter<ViewHolder>()
+                val adapterScheduledRuns = GroupAdapter<ViewHolder>()
+                val adapterInProgressRuns = GroupAdapter<ViewHolder>()
+                val adapterFinishedRuns = GroupAdapter<ViewHolder>()
 
                 p0.children.forEach {
                     Log.d("AvailableRuns", it.toString())
                     val run = it.getValue(Run::class.java)
                     if(run != null) {
-                        adapter.add(
-                            ScheduledRunInfoRow(run)
-                        )
+                        when {
+                            run.inProgress() -> {
+                                adapterInProgressRuns.add(
+                                    ScheduledRunInfoRow(run)
+                                )
+                            }
+                            run.isComplete() -> {
+                                adapterFinishedRuns.add(
+                                    ScheduledRunInfoRow(run)
+                                )
+                            }
+                            else -> {
+                                adapterScheduledRuns.add(
+                                    ScheduledRunInfoRow(run)
+                                )
+                            }
+                        }
                     }
                 }
-                adapter.setOnItemClickListener { item, view ->
+                adapterScheduledRuns.setOnItemClickListener { item, view ->
                     val runItem = item as ScheduledRunInfoRow
 
                     val intent = Intent(view.context, RunDetailsActivity::class.java)
                     intent.putExtra(RUN_KEY, runItem.run)
                     startActivity(intent)
                     finish()
-
                 }
-                
-                recyclerview_availableruns.adapter = adapter
+                adapterInProgressRuns.setOnItemClickListener { item, view ->
+                    val runItem = item as ScheduledRunInfoRow
+
+                    val intent = Intent(view.context, RunDetailsActivity::class.java)
+                    intent.putExtra(RUN_KEY, runItem.run)
+                    startActivity(intent)
+                    finish()
+                }
+                adapterFinishedRuns.setOnItemClickListener { item, view ->
+                    val runItem = item as ScheduledRunInfoRow
+
+                    val intent = Intent(view.context, RunDetailsActivity::class.java)
+                    intent.putExtra(RUN_KEY, runItem.run)
+                    startActivity(intent)
+                    finish()
+                }
+
+                scheduledRuns_recyclerview_availableRuns.adapter = adapterScheduledRuns
+                inProgressRuns_recyclerview_availableRuns.adapter = adapterInProgressRuns
+                finishedRuns_recyclerview_availableRuns.adapter = adapterFinishedRuns
+
             }
 
             override fun onCancelled(p0: DatabaseError) {

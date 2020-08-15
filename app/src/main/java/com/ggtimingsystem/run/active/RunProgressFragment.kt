@@ -1,4 +1,4 @@
-package com.ggtimingsystem.run
+package com.ggtimingsystem.run.active
 
 import android.Manifest
 import android.content.Intent
@@ -7,25 +7,43 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
 import androidx.core.app.ActivityCompat
 import com.ggtimingsystem.R
 import com.ggtimingsystem.database.Database
+import com.ggtimingsystem.main.HomeFragment
 import com.ggtimingsystem.models.Run
+import com.ggtimingsystem.run.AvailableRunsActivity
+import com.ggtimingsystem.run.RunDetailsActivity
 import com.google.android.gms.location.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import kotlinx.android.synthetic.main.activity_active_run.*
-import java.time.Duration.between
+import kotlinx.android.synthetic.main.fragment_run_progress.*
+import java.time.Duration
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import kotlin.math.*
 
+class RunProgressFragment : Fragment() {
 
-class ActiveRunActivity : AppCompatActivity() {
+    companion object {
+        fun newInstance(): RunProgressFragment =
+            RunProgressFragment()
+        const val REQUEST_FINE_LOCATION = 99
+        const val UPDATE_INTERVAL = 5 * 1000 // 5 seconds
+            .toLong()
+        const val FASTEST_INTERVAL = 2 * 1000 // 2 seconds
+            .toLong()
+        const val EARTH_RADIUS_KM = 6371 // volumetric mean radius in km  // 3956 in miles
+    }
+
     private var database = Database()
 
     private var mLocationRequest: LocationRequest? = null
@@ -48,9 +66,21 @@ class ActiveRunActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_active_run)
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        run = intent.getParcelableExtra<Run>(RunDetailsActivity.RUN_KEY)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_run_progress, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity!!);
+        run = activity!!.intent.getParcelableExtra<Run>(RunDetailsActivity.RUN_KEY)
         startTime = ZonedDateTime.parse(run.date)
 
         getDistance()
@@ -63,16 +93,17 @@ class ActiveRunActivity : AppCompatActivity() {
         if(startTime.isBefore(ZonedDateTime.now(ZoneId.of("UTC"))) || startTime.isEqual(ZonedDateTime.now(ZoneId.of("UTC")))){
             startLocationUpdates()
         }
-
     }
+
 
     // creates the functions for the buttons in the activity
     private fun setUpButtons() {
         leaveRun_button_active_run.setOnClickListener {
-            val intent = Intent(this, RunDetailsActivity::class.java)
+            val intent = Intent(activity, RunDetailsActivity::class.java)
             intent.putExtra(AvailableRunsActivity.RUN_KEY, run)
             startActivity(intent)
-            finish()
+            mFusedLocationClient?.removeLocationUpdates(mLocationCallback)
+            activity!!.finish()
         }
     }
 
@@ -105,7 +136,7 @@ class ActiveRunActivity : AppCompatActivity() {
         /**
          * //TODO: get the distance from the database class (and have this thread wait for the function to complete) instead of on the current thread
         distance = database.getDistance(run.uid)
-        */
+         */
     }
 
     // sets up the layout such as the progress bar
@@ -125,8 +156,10 @@ class ActiveRunActivity : AppCompatActivity() {
         // Create location request
         this.mLocationRequest = LocationRequest()
         mLocationRequest!!.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        mLocationRequest!!.interval = Companion.UPDATE_INTERVAL
-        mLocationRequest!!.fastestInterval = Companion.FASTEST_INTERVAL
+        mLocationRequest!!.interval =
+            UPDATE_INTERVAL
+        mLocationRequest!!.fastestInterval =
+            FASTEST_INTERVAL
 
         // Create Location settings request
         val builder: LocationSettingsRequest.Builder = LocationSettingsRequest.Builder()
@@ -134,7 +167,7 @@ class ActiveRunActivity : AppCompatActivity() {
         val locationSettingsRequest: LocationSettingsRequest = builder.build()
 
         // Check whether location settings are satisfied
-        val settingsClient: SettingsClient = LocationServices.getSettingsClient(this)
+        val settingsClient: SettingsClient = LocationServices.getSettingsClient(activity!!)
         settingsClient.checkLocationSettings(locationSettingsRequest)
         checkLocationPermissions()
     } // start location updates
@@ -146,10 +179,10 @@ class ActiveRunActivity : AppCompatActivity() {
         var permissionGranted = true
         // if the app doesn't have these permissions, ask for them
         if (ActivityCompat.checkSelfPermission(
-                this,
+                context!!,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
+                context!!,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
@@ -171,8 +204,8 @@ class ActiveRunActivity : AppCompatActivity() {
 
     private fun requestPermissions() {
         ActivityCompat.requestPermissions(
-            this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-            Companion.REQUEST_FINE_LOCATION
+            activity!!, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+            REQUEST_FINE_LOCATION
         )
     }
 
@@ -217,7 +250,7 @@ class ActiveRunActivity : AppCompatActivity() {
     private fun timeDifferenceMinutes() : Double {
 
         var currentTime = ZonedDateTime.now(ZoneId.of("UTC"))
-        var timeDifference = between(startTime, currentTime)
+        var timeDifference = Duration.between(startTime, currentTime)
         var seconds = timeDifference.seconds
         var minutes = (seconds/60.0 * 100.0).toInt()/100.0  // gets minutes to the 2 decimal place
 
@@ -272,17 +305,5 @@ class ActiveRunActivity : AppCompatActivity() {
         longitude = newLong
         Log.d("ActiveRunActivity", "Longitude: $longitude")
 
-    }
-
-
-
-
-    companion object {
-        const val REQUEST_FINE_LOCATION = 99
-        const val UPDATE_INTERVAL = 5 * 1000 // 5 seconds
-            .toLong()
-        const val FASTEST_INTERVAL = 2 * 1000 // 2 seconds
-            .toLong()
-        const val EARTH_RADIUS_KM = 6371 // volumetric mean radius in km  // 3956 in miles
     }
 }

@@ -89,10 +89,9 @@ class MainActivity : AppCompatActivity() {
         transaction.replace(R.id.container, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
-        Log.d("This works", "This works")
     }
 
-    public fun openJoinRun(view : View){
+    public fun openJoinRun(view: View){
         val intent = Intent(this, AvailableRunsActivity::class.java)
         startActivity(intent)
     }

@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.ggtimingsystem.R
 import com.ggtimingsystem.database.Database
+import com.ggtimingsystem.main.MainActivity
 import com.ggtimingsystem.models.Run
 import com.ggtimingsystem.models.User
 import com.google.firebase.auth.FirebaseAuth
@@ -93,6 +94,8 @@ class RegisterActivity : AppCompatActivity() {
         Log.d("RegisterActivity", "Email is: $email")
         Log.d("RegisterActivity", "Password:$password")
 
+        var isSuccessful = true
+
         //Create user with Firebase Authentication
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener {
@@ -114,6 +117,33 @@ class RegisterActivity : AppCompatActivity() {
             .addOnFailureListener {
                 Log.d("RegisterActivity", "Failed to create user: ${it.message}")
                 Toast.makeText( this, "Failed to create user: ${it.message}", Toast.LENGTH_SHORT).show()
+                isSuccessful = false
+            }
+
+        if(isSuccessful) {
+            // Firebase signIn
+            signInWithEmailAndPassword(email, password)
+        }
+    }
+
+
+    // Firebase signIn
+    private fun signInWithEmailAndPassword(email: String, password: String){
+        // Firebase signIn
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener {
+                if (!it.isSuccessful) return@addOnCompleteListener
+
+                // else if successful
+                val intent = Intent(this, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
+
+            }
+            .addOnFailureListener {
+                Log.d("Login", "Failed to login: ${it.message}")
+                Toast.makeText( this, "Failed to login: ${it.message}", Toast.LENGTH_SHORT).show()
             }
     }
 

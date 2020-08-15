@@ -8,13 +8,10 @@ import android.view.View
 import com.ggtimingsystem.R
 import com.ggtimingsystem.database.Database
 import com.ggtimingsystem.models.Run
-import com.ggtimingsystem.models.RunUserItem
+import com.ggtimingsystem.run.active.ActiveRunActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_run_details.*
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 
 class RunDetailsActivity : AppCompatActivity() {
 
@@ -120,7 +117,7 @@ class RunDetailsActivity : AppCompatActivity() {
 
 
         val intent = Intent(this, ActiveRunActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+        //intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
         intent.putExtra(RunDetailsActivity.RUN_KEY, run)
         startActivity(intent)
 

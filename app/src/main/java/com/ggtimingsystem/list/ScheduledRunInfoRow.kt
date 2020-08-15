@@ -1,18 +1,11 @@
 package com.ggtimingsystem.list
 
 import android.graphics.Color
-import androidx.core.content.ContextCompat
 import com.ggtimingsystem.R
 import com.ggtimingsystem.models.Run
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
-import kotlinx.android.synthetic.main.activity_run_details.*
 import kotlinx.android.synthetic.main.schedule_info_row.view.*
-import java.time.Duration
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-import kotlin.math.abs
 
 class ScheduledRunInfoRow(val run: Run): Item<ViewHolder>() {
     override fun bind(viewHolder: ViewHolder, position: Int) {
