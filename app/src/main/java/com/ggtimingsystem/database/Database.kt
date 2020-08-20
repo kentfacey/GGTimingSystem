@@ -2,7 +2,7 @@ package com.ggtimingsystem.database
 
 import android.util.Log
 import com.ggtimingsystem.models.Run
-import com.ggtimingsystem.models.RunUserItem
+import com.ggtimingsystem.models.RunnersItem
 import com.ggtimingsystem.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -23,13 +23,13 @@ open class Database {
         var date = ZonedDateTime.now(ZoneId.of("UTC"))
         //date = date.plusMinutes(20)
         val dateString = date.toString()
-        val run = Run(uid, dateString, 5.0, 100, 150)
+        val run = Run(uid, dateString, 5.0, 0, 150)
         ref.setValue(run)
     }
 
     // save user distance in a run
     fun saveDistance(distance: Double, runId: String) {
-        val ref = FirebaseDatabase.getInstance().getReference("/runs/$runId/users/$userId")
+        val ref = FirebaseDatabase.getInstance().getReference("/runs/$runId/runners/$userId")
         val distanceListener = object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
 
@@ -49,7 +49,7 @@ open class Database {
 
     // returns the users distance in a run
     fun getDistance(runId: String): Double {
-        val ref = FirebaseDatabase.getInstance().getReference("/runs/$runId/users/$userId/distance")
+        val ref = FirebaseDatabase.getInstance().getReference("/runs/$runId/runners/$userId/distance")
         var distance = 0.0
         val distanceListener = object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
@@ -72,7 +72,7 @@ open class Database {
 
     // save the users time in the run at the end of the run
     fun saveTime(time: ZonedDateTime, runId: String) {
-        val ref = FirebaseDatabase.getInstance().getReference("/runs/$runId/users/$userId")
+        val ref = FirebaseDatabase.getInstance().getReference("/runs/$runId/runners/$userId")
         val timeListener = object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
 
@@ -91,7 +91,7 @@ open class Database {
 
     // save check-in status in a run
     fun saveCheckIn(runId: String, status: Boolean) {
-        val ref = FirebaseDatabase.getInstance().getReference("/runs/$runId/users/$userId/checkedIn")
+        val ref = FirebaseDatabase.getInstance().getReference("/runs/$runId/runners/$userId/checkedIn")
         ref.setValue(status)
         Log.d("RunDetailsActivity","user checked in")
     }
@@ -121,9 +121,11 @@ open class Database {
             override fun doTransaction(currentData: MutableData): Transaction.Result {
                 val currentRun = currentData.getValue(Run::class.java) ?: return Transaction.success(currentData)
                 if(currentRun.currentPeople < currentRun.maxPeople){
+                    val username = getUserName(userId)
 
                     // put user into run
-                    currentRun.users[userId] = RunUserItem(userId)
+                    currentRun.runners[userId] = RunnersItem(userId, username)
+                    Log.d("Database", "${username}")
 
                     // increase people value
                     currentRun.currentPeople = currentRun.currentPeople + 1
@@ -166,7 +168,7 @@ open class Database {
                 val currentRun = currentData.getValue(Run::class.java) ?: return Transaction.success(currentData)
 
                 // remove user from run
-                currentRun.users.remove(userId)
+                currentRun.runners.remove(userId)
 
                 // decrease people value
                 currentRun.currentPeople = currentRun.currentPeople - 1
@@ -190,5 +192,27 @@ open class Database {
                 Log.d("RunDetailsActivity", "postTransaction:onComplete:$error")
             }
         })
+    }
+
+    // returns the user object
+    fun getUserName(userId: String): String{
+        val ref = FirebaseDatabase.getInstance().getReference("users/$userId/username")
+        var username =""
+
+        val distanceListener = object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if(snapshot.exists()) {
+                    username = snapshot.value.toString()
+                }
+            }
+
+        }
+
+        ref.addListenerForSingleValueEvent(distanceListener)
+        return username
     }
 }

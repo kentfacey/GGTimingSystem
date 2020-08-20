@@ -30,6 +30,7 @@ class AvailableRunsActivity : AppCompatActivity() {
         const val RUN_KEY = "RUN_KEY"
     }
 
+    // gets all the runs from the database and puts them in the layout
     private fun fetchScheduledRuns() {
         val ref = FirebaseDatabase.getInstance().getReference("/runs")
         ref.orderByChild("date")

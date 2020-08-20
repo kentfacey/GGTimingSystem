@@ -6,9 +6,10 @@ import java.time.ZonedDateTime
 
 @Parcelize
 // a userItem that is is held in a run
-class RunUserItem
+class RunnersItem
     (
         val userId: String = "",
+        val username: String = "",
         var checkedIn: Boolean = false,
         var position: Int = 0,
         var time: String? = null,

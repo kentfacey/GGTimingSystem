@@ -1,25 +1,23 @@
 package com.ggtimingsystem.models
 
 import android.os.Parcelable
-import android.util.Log
 import kotlinx.android.parcel.Parcelize
 import java.time.Duration
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.math.abs
 
 @Parcelize
 class Run
     (
-        val uid: String = "",
-        val date: String = "",
-        val distance: Double = 0.0,
-        var currentPeople: Int = 0,
-        val maxPeople: Int = 0,
-        var numCheckedIn: Int = 0,
-        var users: MutableMap<String, RunUserItem> = mutableMapOf(),
-        val timeOut: Long = 120 // in minutes
+    val uid: String = "",
+    val date: String = "",
+    val distance: Double = 0.0,
+    var currentPeople: Int = 0,
+    val maxPeople: Int = 0,
+    var numCheckedIn: Int = 0,
+    var runners: MutableMap<String, RunnersItem> = mutableMapOf(),
+    val timeOut: Long = 120 // in minutes
     ) : Parcelable{
 
 

@@ -127,7 +127,7 @@ class RunDetailsActivity : AppCompatActivity() {
     // returns true if the user is in the race, sets visibility of control buttons
     private fun userInRun(userId: String?) {
         // location of user in database
-        val ref = FirebaseDatabase.getInstance().getReference("/runs/${run.uid}/users/$userId")
+        val ref = FirebaseDatabase.getInstance().getReference("/runs/${run.uid}/runners/$userId")
 
         ref.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
@@ -135,7 +135,7 @@ class RunDetailsActivity : AppCompatActivity() {
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
-                // if the users id is in the runs set of users
+                // if the users id is in the runs set of runners
                 when {
                     run.isComplete() -> {
                         viewResults_button_runDetails.visibility = View.VISIBLE

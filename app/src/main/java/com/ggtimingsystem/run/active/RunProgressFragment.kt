@@ -112,7 +112,7 @@ class RunProgressFragment : Fragment() {
     private fun getDistance(){
         val userId = FirebaseAuth.getInstance().uid ?: ""
         // sets the distance to the current distance run in the database, important if they leave the run and come back
-        val ref = FirebaseDatabase.getInstance().getReference("/runs/${run.uid}/users/$userId/distance")
+        val ref = FirebaseDatabase.getInstance().getReference("/runs/${run.uid}/runners/$userId/distance")
         val distanceListener = object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
 
