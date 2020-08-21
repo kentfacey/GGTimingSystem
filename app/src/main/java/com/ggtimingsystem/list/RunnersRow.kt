@@ -8,9 +8,11 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.runners_row.view.*
 
 class RunnersRow(val runner: RunnersItem, position: Int) : Item<ViewHolder>() {
+    val place = position
+
     override fun bind(viewHolder: ViewHolder, position: Int) {
 
-        val positionString = "$position."
+        val positionString = "$place."
         viewHolder.itemView.position_textview_runners_row.text = positionString
         viewHolder.itemView.username_textview_runners_row.text = runner.username
         viewHolder.itemView.distance_textview_runners_row.text = runner.distance.toString()

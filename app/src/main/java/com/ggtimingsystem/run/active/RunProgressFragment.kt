@@ -96,6 +96,7 @@ class RunProgressFragment : Fragment() {
     }
 
 
+
     // creates the functions for the buttons in the activity
     private fun setUpButtons() {
         leaveRun_button_active_run.setOnClickListener {
@@ -305,5 +306,11 @@ class RunProgressFragment : Fragment() {
         longitude = newLong
         Log.d("ActiveRunActivity", "Longitude: $longitude")
 
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // stop location updates
+        mFusedLocationClient?.removeLocationUpdates(mLocationCallback)
     }
 }

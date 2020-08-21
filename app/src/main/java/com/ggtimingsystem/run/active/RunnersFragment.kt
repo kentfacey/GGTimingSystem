@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.fragment_runners.*
 
 class RunnersFragment : Fragment() {
 
-    lateinit var run: Run
+    lateinit var run: String
     private lateinit var ref: DatabaseReference
     var valueEvent = object: ValueEventListener {
         override fun onDataChange(p0: DataSnapshot) {
@@ -28,23 +28,19 @@ class RunnersFragment : Fragment() {
             var position = 1
             p0.children.forEach{
                 val runner = it.getValue(RunnersItem::class.java)
-                /**if (runner != null) {
-                runnersList.add(runner)
+                if (runner != null) {
+                    runnersList.add(runner)
                 }
-                 */
-
-                adapterRunners.add(RunnersRow(runner!!, position))
-                position += 1
             }
 
-            /**runnersList = runnersList.asReversed()
+            runnersList.sortByDescending{it.distance}
 
             val iterator = runnersList.listIterator()
             for(item in iterator) {
-            adapterRunners.add(RunnersRow(item, position))
-            position += 1
+                adapterRunners.add(RunnersRow(item, position))
+                position += 1
             }
-             */
+
             runnersList_recyclerview_RunnersFragment.adapter = adapterRunners
         }
 
@@ -62,22 +58,21 @@ class RunnersFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
+        run = this.arguments?.getString(ActiveRunActivity.RUN_KEY).toString()
         return inflater.inflate(R.layout.fragment_runners, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        run = activity!!.intent.getParcelableExtra<Run>(RunDetailsActivity.RUN_KEY)
-        Log.d("RunnerFragment", "$run.uid")
+        Log.d("RunnerFragment", "Run id: $run")
         fetchScheduledRuns()
     }
 
 
     // gets all the runs from the database and puts them in the layout
     private fun fetchScheduledRuns() {
-        ref = FirebaseDatabase.getInstance().getReference("/runs/${run.uid}/runners")
-        //ref.orderByChild("distance")
+        ref = FirebaseDatabase.getInstance().getReference("/runs/$run/runners")
+        ref.orderByChild("distance")
         Log.d("RunnersFragment", "fetchScheduledRuns")
 
         ref.addValueEventListener(valueEvent)

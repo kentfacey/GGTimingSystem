@@ -15,6 +15,7 @@ open class Database {
 
     private val userId = FirebaseAuth.getInstance().uid ?: ""
     private val userRef = FirebaseDatabase.getInstance().getReference("/users/$userId")
+    private var username = getUserName(userId)
 
     // test create run in saveUserToFirebaseDatabase
     fun createRun() {
@@ -121,11 +122,10 @@ open class Database {
             override fun doTransaction(currentData: MutableData): Transaction.Result {
                 val currentRun = currentData.getValue(Run::class.java) ?: return Transaction.success(currentData)
                 if(currentRun.currentPeople < currentRun.maxPeople){
-                    val username = getUserName(userId)
 
                     // put user into run
                     currentRun.runners[userId] = RunnersItem(userId, username)
-                    Log.d("Database", "${username}")
+                    Log.d("Database", "username = $username")
 
                     // increase people value
                     currentRun.currentPeople = currentRun.currentPeople + 1
@@ -197,22 +197,26 @@ open class Database {
     // returns the user object
     fun getUserName(userId: String): String{
         val ref = FirebaseDatabase.getInstance().getReference("users/$userId/username")
-        var username =""
+        var name = ""
 
-        val distanceListener = object : ValueEventListener {
+
+        val usernameListener = object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
 
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 if(snapshot.exists()) {
+                    Log.d("Database", "Snapshot username: ${snapshot.value}")
+                    name = snapshot.value.toString()
                     username = snapshot.value.toString()
                 }
             }
 
         }
 
-        ref.addListenerForSingleValueEvent(distanceListener)
-        return username
+        ref.addListenerForSingleValueEvent(usernameListener)
+        Log.d("Database", "Username found: $name")
+        return name
     }
 }
